@@ -1039,7 +1039,7 @@ class RunDirectory:
         seq_arrays = [f.get_array(device, key, extra_dims=extra_dims)
                       for f in self.files
                       if device in (f.control_sources | f.instrument_sources)]
-        seq_arrays = [a if (a.size > 0) for a in seq_arrays]
+        seq_arrays = [a for a in seq_arrays if (a.size > 0)]
         if not seq_arrays:
             raise NoDataError
 
