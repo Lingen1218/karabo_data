@@ -176,6 +176,14 @@ class PropertyNameError(KeyError):
     def __str__(self):
         return "No property {!r} for source {!r}".format(self.prop, self.source)
 
+class NoDataError(KeyError):
+    def __init__(self, prop, source):
+        self.prop = prop
+        self.source = source
+
+    def __str__(self):
+        return "Property {!r} exists but has no data (source: {!r})".format(self.prop, self.source)
+
 
 class H5File:
     """Access an HDF5 file generated at European XFEL.
@@ -1031,6 +1039,9 @@ class RunDirectory:
         seq_arrays = [f.get_array(device, key, extra_dims=extra_dims)
                       for f in self.files
                       if device in (f.control_sources | f.instrument_sources)]
+        seq_arrays = [a if (a.size > 0) for a in seq_arrays]
+        if not seq_arrays:
+            raise NoDataError
 
         return xr.concat(sorted(seq_arrays, key=lambda a: a.coords['trainId'][0]),
                          dim='trainId')
