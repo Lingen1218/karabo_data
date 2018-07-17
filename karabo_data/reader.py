@@ -1041,7 +1041,7 @@ class RunDirectory:
                       if device in (f.control_sources | f.instrument_sources)]
         seq_arrays = [a for a in seq_arrays if (a.size > 0)]
         if not seq_arrays:
-            raise NoDataError
+            raise NoDataError(key, device)
 
         return xr.concat(sorted(seq_arrays, key=lambda a: a.coords['trainId'][0]),
                          dim='trainId')
